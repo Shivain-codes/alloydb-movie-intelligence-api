@@ -170,9 +170,15 @@ async def natural_language_query(req: NLQueryRequest):
         result_json   = rows[0]["result_json"]
 
         results = []
-        if result_json and not isinstance(result_json, str):
-            results = list(result_json) if result_json else []
-
+        if result_json:
+            if isinstance(result_json, str):
+                import json
+                results = json.loads(result_json)
+            elif isinstance(result_json, list):
+                results = result_json
+            else:
+                results = list(result_json)
+        
         return NLQueryResponse(
             question=req.question,
             generated_sql=generated_sql,
